@@ -136,7 +136,8 @@ export function ChatWidget() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg flex items-center justify-center transition-colors"
+            className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg flex items-center justify-center transition-colors touch-manipulation safe-bottom"
+            style={{ marginBottom: 'env(safe-area-inset-bottom, 24px)' }}
             aria-label="Abrir chat com Maria da Terra"
           >
             <MessageCircle className="h-6 w-6" />
@@ -151,13 +152,14 @@ export function ChatWidget() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-6 right-6 z-50 w-[calc(100vw-3rem)] sm:w-96 h-[500px] max-h-[80vh] bg-background border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="fixed inset-2 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-96 z-50 sm:h-[500px] sm:max-h-[80vh] bg-background border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden overscroll-contain"
+            style={{ maxHeight: '90vh' }}
           >
             {/* Chat header */}
-            <div className="flex items-center justify-between px-4 py-3 bg-emerald-600 text-white">
+            <div className="flex items-center justify-between px-3 sm:px-4 py-3 bg-emerald-600 text-white flex-shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                  <Bot className="h-4 w-4" />
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <Bot className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </div>
                 <div>
                   <p className="font-medium text-sm">Maria da Terra</p>
@@ -170,7 +172,7 @@ export function ChatWidget() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsOpen(false)}
-                className="text-white hover:bg-white/20 h-8 w-8"
+                className="text-white hover:bg-white/20 h-9 w-9 sm:h-8 sm:w-8 touch-manipulation"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -179,7 +181,7 @@ export function ChatWidget() {
             {/* Chat messages */}
             <div
               ref={scrollRef}
-              className="flex-1 overflow-y-auto p-4 space-y-3"
+              className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 overscroll-contain"
             >
               {messages.map((message) => (
                 <motion.div
@@ -229,7 +231,7 @@ export function ChatWidget() {
             </div>
 
             {/* Chat input */}
-            <div className="border-t p-3">
+            <div className="border-t p-3 safe-bottom flex-shrink-0">
               <form
                 onSubmit={(e) => {
                   e.preventDefault()
@@ -249,7 +251,7 @@ export function ChatWidget() {
                   type="submit"
                   size="icon"
                   disabled={!input.trim() || isLoading}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white touch-manipulation min-h-[44px] min-w-[44px]"
                 >
                   <Send className="h-4 w-4" />
                 </Button>

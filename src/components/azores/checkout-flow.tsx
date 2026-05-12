@@ -110,14 +110,14 @@ export function CheckoutFlow({ onBack, onViewChange }: CheckoutFlowProps) {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <div className="container mx-auto px-4 py-6 sm:py-8 max-w-3xl">
       {/* Progress steps */}
-      <div className="flex items-center justify-center gap-4 mb-8">
+      <div className="flex items-center justify-center gap-2 sm:gap-4 mb-6 sm:mb-8">
         {(['billing', 'payment', 'confirmation'] as CheckoutStep[]).map(
           (s, i) => (
-            <div key={s} className="flex items-center gap-2">
+            <div key={s} className="flex items-center gap-1 sm:gap-2">
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
+                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium transition-colors ${
                   step === s
                     ? 'bg-emerald-600 text-white'
                     : i <
@@ -128,13 +128,13 @@ export function CheckoutFlow({ onBack, onViewChange }: CheckoutFlowProps) {
               >
                 {i <
                 ['billing', 'payment', 'confirmation'].indexOf(step) ? (
-                  <CheckCircle2 className="h-4 w-4" />
+                  <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4" />
                 ) : (
                   i + 1
                 )}
               </div>
               <span
-                className={`text-sm hidden sm:inline ${
+                className={`text-xs sm:text-sm hidden md:inline ${
                   step === s
                     ? 'text-foreground font-medium'
                     : 'text-muted-foreground'
@@ -148,7 +148,7 @@ export function CheckoutFlow({ onBack, onViewChange }: CheckoutFlowProps) {
               </span>
               {i < 2 && (
                 <div
-                  className={`w-8 h-0.5 ${
+                  className={`w-4 sm:w-8 h-0.5 ${
                     i <
                     ['billing', 'payment', 'confirmation'].indexOf(step)
                       ? 'bg-emerald-600'
@@ -169,17 +169,20 @@ export function CheckoutFlow({ onBack, onViewChange }: CheckoutFlowProps) {
         >
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ArrowLeft
-                  className="h-5 w-5 cursor-pointer hover:text-emerald-600 transition-colors"
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <button
                   onClick={onBack}
-                />
+                  className="touch-manipulation p-1 -m-1 hover:text-emerald-600 transition-colors"
+                  aria-label="Voltar"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
                 Dados de Faturação
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleBillingSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <form onSubmit={handleBillingSubmit} className="space-y-3 sm:space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div className="space-y-2 sm:col-span-2">
                     <Label htmlFor="fullName">Nome Completo *</Label>
                     <Input
@@ -309,7 +312,7 @@ export function CheckoutFlow({ onBack, onViewChange }: CheckoutFlowProps) {
 
                 <Button
                   type="submit"
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white touch-manipulation min-h-[44px]"
                 >
                   Continuar para Pagamento
                 </Button>
@@ -327,73 +330,73 @@ export function CheckoutFlow({ onBack, onViewChange }: CheckoutFlowProps) {
         >
           <Card>
             <CardHeader>
-              <CardTitle>Método de Pagamento</CardTitle>
+              <CardTitle className="text-base sm:text-lg">Método de Pagamento</CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handlePaymentSubmit} className="space-y-6">
+              <form onSubmit={handlePaymentSubmit} className="space-y-4 sm:space-y-6">
                 <RadioGroup
                   value={paymentMethod}
                   onValueChange={(v) => setPaymentMethod(v as PaymentMethod)}
-                  className="space-y-3"
+                  className="space-y-2 sm:space-y-3"
                 >
-                  <div className="flex items-center space-x-3 border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer">
+                  <div className="flex items-center space-x-3 border rounded-lg p-3 sm:p-4 hover:bg-muted/50 transition-colors cursor-pointer touch-manipulation min-h-[52px]">
                     <RadioGroupItem value="card" id="card" />
                     <Label
                       htmlFor="card"
-                      className="flex items-center gap-3 cursor-pointer flex-1"
+                      className="flex items-center gap-2 sm:gap-3 cursor-pointer flex-1"
                     >
-                      <CreditCard className="h-5 w-5 text-emerald-600" />
+                      <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 flex-shrink-0" />
                       <div>
-                        <p className="font-medium">Cartão de Crédito/Débito</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="font-medium text-sm sm:text-base">Cartão de Crédito/Débito</p>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">
                           Visa, Mastercard, Maestro
                         </p>
                       </div>
                     </Label>
                   </div>
 
-                  <div className="flex items-center space-x-3 border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer">
+                  <div className="flex items-center space-x-3 border rounded-lg p-3 sm:p-4 hover:bg-muted/50 transition-colors cursor-pointer touch-manipulation min-h-[52px]">
                     <RadioGroupItem value="mbway" id="mbway" />
                     <Label
                       htmlFor="mbway"
-                      className="flex items-center gap-3 cursor-pointer flex-1"
+                      className="flex items-center gap-2 sm:gap-3 cursor-pointer flex-1"
                     >
-                      <Smartphone className="h-5 w-5 text-emerald-600" />
+                      <Smartphone className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 flex-shrink-0" />
                       <div>
-                        <p className="font-medium">MB WAY</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="font-medium text-sm sm:text-base">MB WAY</p>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">
                           Pagamento via app MB WAY
                         </p>
                       </div>
                     </Label>
                   </div>
 
-                  <div className="flex items-center space-x-3 border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer">
+                  <div className="flex items-center space-x-3 border rounded-lg p-3 sm:p-4 hover:bg-muted/50 transition-colors cursor-pointer touch-manipulation min-h-[52px]">
                     <RadioGroupItem value="multibanco" id="multibanco" />
                     <Label
                       htmlFor="multibanco"
-                      className="flex items-center gap-3 cursor-pointer flex-1"
+                      className="flex items-center gap-2 sm:gap-3 cursor-pointer flex-1"
                     >
-                      <Building2 className="h-5 w-5 text-emerald-600" />
+                      <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 flex-shrink-0" />
                       <div>
-                        <p className="font-medium">Multibanco</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="font-medium text-sm sm:text-base">Multibanco</p>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">
                           Referência para pagamento em caixa ATM
                         </p>
                       </div>
                     </Label>
                   </div>
 
-                  <div className="flex items-center space-x-3 border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer">
+                  <div className="flex items-center space-x-3 border rounded-lg p-3 sm:p-4 hover:bg-muted/50 transition-colors cursor-pointer touch-manipulation min-h-[52px]">
                     <RadioGroupItem value="sepa" id="sepa" />
                     <Label
                       htmlFor="sepa"
-                      className="flex items-center gap-3 cursor-pointer flex-1"
+                      className="flex items-center gap-2 sm:gap-3 cursor-pointer flex-1"
                     >
-                      <Building2 className="h-5 w-5 text-emerald-600" />
+                      <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 flex-shrink-0" />
                       <div>
-                        <p className="font-medium">Transferência SEPA</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="font-medium text-sm sm:text-base">Transferência SEPA</p>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">
                           Transferência bancária europeia
                         </p>
                       </div>
@@ -403,12 +406,12 @@ export function CheckoutFlow({ onBack, onViewChange }: CheckoutFlowProps) {
 
                 {/* Card details (if card selected) */}
                 {paymentMethod === 'card' && (
-                  <div className="space-y-4 p-4 bg-muted/30 rounded-lg">
+                  <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 bg-muted/30 rounded-lg">
                     <div className="space-y-2">
                       <Label>Número do Cartão</Label>
                       <Input placeholder="1234 5678 9012 3456" />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
                       <div className="space-y-2">
                         <Label>Validade</Label>
                         <Input placeholder="MM/AA" />
@@ -422,32 +425,33 @@ export function CheckoutFlow({ onBack, onViewChange }: CheckoutFlowProps) {
                 )}
 
                 {paymentMethod === 'mbway' && (
-                  <div className="space-y-2 p-4 bg-muted/30 rounded-lg">
+                  <div className="space-y-2 p-3 sm:p-4 bg-muted/30 rounded-lg">
                     <Label>Número de Telemóvel MB WAY</Label>
                     <Input placeholder="+351 912 345 678" />
                   </div>
                 )}
 
-                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-                  <p className="text-sm text-emerald-800">
+                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 sm:p-4">
+                  <p className="text-xs sm:text-sm text-emerald-800">
                     💳 Os seus dados de pagamento são processados de forma
                     encriptada através da infraestrutura Atlas Core, não sendo
                     armazenados nos nossos servidores.
                   </p>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setStep('billing')}
+                    className="w-full sm:w-auto touch-manipulation min-h-[44px]"
                   >
                     Voltar
                   </Button>
                   <Button
                     type="submit"
                     disabled={isProcessing}
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+                    className="flex-1 w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white touch-manipulation min-h-[44px]"
                   >
                     {isProcessing ? (
                       <>
@@ -472,39 +476,40 @@ export function CheckoutFlow({ onBack, onViewChange }: CheckoutFlowProps) {
           animate={{ opacity: 1, scale: 1 }}
         >
           <Card className="text-center">
-            <CardContent className="py-12">
+            <CardContent className="py-8 sm:py-12">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', delay: 0.2 }}
-                className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-6"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4 sm:mb-6"
               >
-                <CheckCircle2 className="h-10 w-10 text-emerald-600" />
+                <CheckCircle2 className="h-8 w-8 sm:h-10 sm:w-10 text-emerald-600" />
               </motion.div>
-              <h2 className="text-2xl font-bold mb-2">
+              <h2 className="text-xl sm:text-2xl font-bold mb-2">
                 Encomenda Confirmada!
               </h2>
-              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+              <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 max-w-md mx-auto px-4">
                 Obrigado pela sua encomenda! O produto viaja do meio do
                 Atlântico para a sua mesa com todo o cuidado. Receberá um
                 e-mail com os detalhes.
               </p>
-              <p className="text-sm text-muted-foreground mb-8">
+              <p className="text-xs sm:text-sm text-muted-foreground mb-6 sm:mb-8">
                 Nº da Encomenda:{' '}
                 <span className="font-mono font-medium text-foreground">
                   AE-{Date.now().toString().slice(-6)}
                 </span>
               </p>
-              <div className="flex gap-3 justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button
                   variant="outline"
                   onClick={() => onViewChange('products')}
+                  className="touch-manipulation min-h-[44px]"
                 >
                   Continuar a Comprar
                 </Button>
                 <Button
                   onClick={() => onViewChange('home')}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white touch-manipulation min-h-[44px]"
                 >
                   Voltar ao Início
                 </Button>

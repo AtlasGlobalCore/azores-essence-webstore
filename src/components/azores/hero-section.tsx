@@ -10,7 +10,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ onShopNow }: HeroSectionProps) {
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative overflow-hidden min-h-[50vh] sm:min-h-[60vh] md:min-h-auto">
       {/* Background image */}
       <div className="absolute inset-0 z-0">
         <img
@@ -22,43 +22,43 @@ export function HeroSection({ onShopNow }: HeroSectionProps) {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 py-24 md:py-36 lg:py-44">
+      <div className="relative z-10 container mx-auto px-4 py-16 sm:py-24 md:py-36 lg:py-44">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="max-w-2xl"
         >
-          <div className="flex items-center gap-2 mb-4">
-            <MapPin className="h-5 w-5 text-emerald-400" />
-            <span className="text-emerald-400 text-sm font-medium tracking-widest uppercase">
+          <div className="flex items-center gap-2 mb-3 sm:mb-4">
+            <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-400" />
+            <span className="text-emerald-400 text-xs sm:text-sm font-medium tracking-widest uppercase">
               Do meio do Atlântico para a tua mesa
             </span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
+          <h1 className="text-3xl min-[400px]:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-3 sm:mb-4">
             Sabores Autênticos{' '}
             <span className="text-emerald-400">dos Açores</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-gray-200 mb-8 leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-6 sm:mb-8 leading-relaxed">
             Descubra queijos, vinhos, méis e tesouros das nove ilhas.
             Produtos artesanais cultivados em solo vulcânico, banhados pelo
             Atlântico. A essência dos Açores, entregue em sua casa.
           </p>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col min-[400px]:flex-row flex-wrap gap-3">
             <Button
               size="lg"
               onClick={onShopNow}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 text-base"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 text-base touch-manipulation min-h-[44px]"
             >
               Explorar Produtos
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-white/30 text-white hover:bg-white/10 px-8 text-base"
+              className="border-white/30 text-white hover:bg-white/10 px-8 text-base touch-manipulation min-h-[44px]"
               onClick={onShopNow}
             >
               Ver Catálogo
@@ -71,7 +71,7 @@ export function HeroSection({ onShopNow }: HeroSectionProps) {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl"
+          className="mt-8 sm:mt-12 grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-2xl"
         >
           {[
             { value: '9', label: 'Ilhas' },
@@ -81,12 +81,12 @@ export function HeroSection({ onShopNow }: HeroSectionProps) {
           ].map((stat) => (
             <div
               key={stat.label}
-              className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-3 text-center border border-white/10"
+              className="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-4 py-2 sm:py-3 text-center border border-white/10"
             >
-              <div className="text-xl md:text-2xl font-bold text-emerald-400">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-emerald-400">
                 {stat.value}
               </div>
-              <div className="text-xs text-gray-300">{stat.label}</div>
+              <div className="text-[10px] sm:text-xs text-gray-300">{stat.label}</div>
             </div>
           ))}
         </motion.div>

@@ -20,9 +20,9 @@ export function CartSidebar({ onCheckout }: CartSidebarProps) {
 
   return (
     <Sheet open={isOpen} onOpenChange={setCartOpen}>
-      <SheetContent className="flex flex-col w-full sm:max-w-md">
+      <SheetContent className="flex flex-col w-full sm:max-w-md overscroll-contain safe-bottom">
         <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
+          <SheetTitle className="flex items-center gap-2 text-base sm:text-lg">
             <ShoppingBag className="h-5 w-5 text-emerald-600" />
             Carrinho de Compras
             {totalItems > 0 && (
@@ -52,7 +52,7 @@ export function CartSidebar({ onCheckout }: CartSidebarProps) {
         ) : (
           <>
             {/* Cart items */}
-            <div className="flex-1 overflow-y-auto py-4 space-y-4">
+            <div className="flex-1 overflow-y-auto py-4 space-y-4 overscroll-contain">
               <AnimatePresence initial={false}>
                 {items.map((item) => (
                   <motion.div
@@ -64,7 +64,7 @@ export function CartSidebar({ onCheckout }: CartSidebarProps) {
                     className="flex gap-3"
                   >
                     {/* Product image */}
-                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                       <img
                         src={item.imageUrl || '/placeholder.png'}
                         alt={item.namePt}
@@ -74,20 +74,20 @@ export function CartSidebar({ onCheckout }: CartSidebarProps) {
 
                     {/* Product details */}
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium line-clamp-1">
+                      <h4 className="text-xs sm:text-sm font-medium line-clamp-1">
                         {item.namePt}
                       </h4>
                       {item.island && (
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">
                           {item.island}
                         </p>
                       )}
-                      <div className="flex items-center justify-between mt-1.5">
-                        <div className="flex items-center gap-1.5">
+                      <div className="flex items-center justify-between mt-1.5 gap-2">
+                        <div className="flex items-center gap-1 sm:gap-1.5">
                           <Button
                             variant="outline"
                             size="icon"
-                            className="h-6 w-6"
+                            className="h-7 w-7 sm:h-8 sm:w-8 touch-manipulation min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0"
                             onClick={() =>
                               updateQuantity(item.id, item.quantity - 1)
                             }
@@ -100,7 +100,7 @@ export function CartSidebar({ onCheckout }: CartSidebarProps) {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="h-6 w-6"
+                            className="h-7 w-7 sm:h-8 sm:w-8 touch-manipulation min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0"
                             onClick={() =>
                               updateQuantity(item.id, item.quantity + 1)
                             }
@@ -108,7 +108,7 @@ export function CartSidebar({ onCheckout }: CartSidebarProps) {
                             <Plus className="h-3 w-3" />
                           </Button>
                         </div>
-                        <span className="text-sm font-semibold">
+                        <span className="text-xs sm:text-sm font-semibold whitespace-nowrap">
                           {(item.price * item.quantity).toFixed(2)}€
                         </span>
                       </div>
@@ -118,7 +118,7 @@ export function CartSidebar({ onCheckout }: CartSidebarProps) {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground hover:text-destructive touch-manipulation min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0"
                       onClick={() => removeItem(item.id)}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -157,11 +157,11 @@ export function CartSidebar({ onCheckout }: CartSidebarProps) {
             </div>
 
             {/* Actions */}
-            <SheetFooter className="gap-2">
+            <SheetFooter className="flex-col sm:flex-row gap-2 safe-bottom">
               <Button
                 variant="outline"
                 onClick={clearCart}
-                className="gap-2"
+                className="gap-2 w-full sm:w-auto touch-manipulation min-h-[44px]"
               >
                 <Trash2 className="h-4 w-4" />
                 Limpar
@@ -171,7 +171,7 @@ export function CartSidebar({ onCheckout }: CartSidebarProps) {
                   setCartOpen(false)
                   onCheckout()
                 }}
-                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white gap-2"
+                className="flex-1 w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white gap-2 touch-manipulation min-h-[44px]"
               >
                 Finalizar Encomenda
                 <ArrowRight className="h-4 w-4" />

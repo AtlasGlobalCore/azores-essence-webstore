@@ -42,10 +42,10 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
             className="h-9 w-9 rounded-full object-cover"
           />
           <div className="flex flex-col">
-            <span className="text-lg font-bold leading-tight tracking-tight text-foreground">
+            <span className="text-base sm:text-lg font-bold leading-tight tracking-tight text-foreground">
               Azores Essence
             </span>
-            <span className="text-[10px] leading-tight text-muted-foreground tracking-widest uppercase">
+            <span className="text-[10px] leading-tight text-muted-foreground tracking-widest uppercase hidden min-[400px]:inline">
               Açores no teu coração
             </span>
           </div>
@@ -93,12 +93,12 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
             variant="outline"
             size="sm"
             onClick={toggleCart}
-            className="relative gap-2"
+            className="relative gap-2 touch-manipulation min-h-[44px] min-w-[44px]"
           >
             <ShoppingCart className="h-4 w-4" />
             <span className="hidden sm:inline">Carrinho</span>
             {totalItems > 0 && (
-              <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-[10px] bg-emerald-600 text-white">
+              <Badge className="absolute -top-2 -right-2 h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px] bg-emerald-600 text-white">
                 {totalItems}
               </Badge>
             )}
@@ -108,7 +108,7 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="md:hidden touch-manipulation min-h-[44px] min-w-[44px]"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -118,7 +118,7 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t bg-background">
+        <div className="md:hidden border-t bg-background overscroll-contain">
           <nav className="container mx-auto px-4 py-3 flex flex-col gap-1">
             {navItems.map((item) => (
               <Button
@@ -129,7 +129,7 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
                   onViewChange(item.view)
                   setMobileMenuOpen(false)
                 }}
-                className="justify-start gap-2"
+                className="justify-start gap-2 touch-manipulation min-h-[44px]"
               >
                 {item.icon}
                 {item.label}
@@ -145,7 +145,7 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
                   onViewChange(item.view)
                   setMobileMenuOpen(false)
                 }}
-                className="justify-start gap-2"
+                className="justify-start gap-2 touch-manipulation min-h-[44px]"
               >
                 {item.icon}
                 {item.label}

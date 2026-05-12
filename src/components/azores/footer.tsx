@@ -11,9 +11,9 @@ export function Footer({ onViewChange }: FooterProps) {
   return (
     <footer className="border-t bg-muted/30 mt-auto">
       <div className="container mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           {/* Brand */}
-          <div className="md:col-span-1">
+          <div className="md:col-span-1 col-span-2 sm:col-span-2">
             <div className="flex items-center gap-2 mb-3">
               <img
                 src="/azores-logo.png"
@@ -97,12 +97,12 @@ export function Footer({ onViewChange }: FooterProps) {
           </div>
         </div>
 
-        <div className="border-t mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground">
+        <div className="border-t mt-8 pt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between sm:gap-4">
+          <p className="text-xs text-muted-foreground text-center sm:text-left">
             © 2026 Azores Meet, Lda — NIF: 513553169. Todos os direitos
             reservados.
           </p>
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
+          <p className="text-xs text-muted-foreground flex items-center gap-1 justify-center">
             Feito com <Heart className="h-3 w-3 text-red-500" /> nos Açores
           </p>
         </div>

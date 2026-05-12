@@ -64,17 +64,17 @@ export function ProductCatalog({ onViewChange }: ProductCatalogProps) {
   return (
     <section className="container mx-auto px-4 py-12">
       {/* Section header */}
-      <div className="text-center mb-10">
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+      <div className="text-center mb-6 sm:mb-10">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 sm:mb-3">
           Nossos Produtos
         </h2>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+        <p className="text-muted-foreground text-sm sm:text-lg max-w-2xl mx-auto px-2">
           Cada produto conta a história de uma ilha. Do queijo curado de São Jorge ao vinho vulcânico do Pico.
         </p>
       </div>
 
       {/* Search and filters */}
-      <div className="mb-8 space-y-4">
+      <div className="mb-6 sm:mb-8 space-y-3 sm:space-y-4">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -88,7 +88,7 @@ export function ProductCatalog({ onViewChange }: ProductCatalogProps) {
           <Button
             variant="outline"
             onClick={() => setShowFilters(!showFilters)}
-            className="gap-2"
+            className="gap-2 touch-manipulation min-h-[44px]"
           >
             <Filter className="h-4 w-4" />
             Filtros
@@ -137,13 +137,13 @@ export function ProductCatalog({ onViewChange }: ProductCatalogProps) {
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 p-3 sm:p-4 bg-muted/50 rounded-lg">
                 <div>
                   <h4 className="text-sm font-medium mb-2 flex items-center gap-1.5">
                     <MapPin className="h-3.5 w-3.5" />
                     Ilha
                   </h4>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-1 sm:gap-1.5">
                     {ISLANDS.map((island) => (
                       <Button
                         key={island}
@@ -152,7 +152,7 @@ export function ProductCatalog({ onViewChange }: ProductCatalogProps) {
                         onClick={() =>
                           setSelectedIsland(selectedIsland === island ? null : island)
                         }
-                        className="text-xs"
+                        className="text-[11px] sm:text-xs px-2 sm:px-3 touch-manipulation min-h-[36px] sm:min-h-[36px]"
                       >
                         {island}
                       </Button>
@@ -164,7 +164,7 @@ export function ProductCatalog({ onViewChange }: ProductCatalogProps) {
                     <Tag className="h-3.5 w-3.5" />
                     Categoria
                   </h4>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-1 sm:gap-1.5">
                     {CATEGORIES.map((category) => (
                       <Button
                         key={category}
@@ -175,7 +175,7 @@ export function ProductCatalog({ onViewChange }: ProductCatalogProps) {
                             selectedCategory === category ? null : category
                           )
                         }
-                        className="text-xs"
+                        className="text-[11px] sm:text-xs px-2 sm:px-3 touch-manipulation min-h-[36px]"
                       >
                         {category}
                       </Button>
@@ -189,7 +189,7 @@ export function ProductCatalog({ onViewChange }: ProductCatalogProps) {
       </div>
 
       {/* Products grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <AnimatePresence mode="popLayout">
           {filteredProducts.map((product, index) => (
             <ProductCard
@@ -278,27 +278,28 @@ function ProductCard({
           )}
         </div>
 
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-foreground mb-1 line-clamp-1">
+        <CardContent className="p-3 sm:p-4">
+          <h3 className="font-semibold text-foreground mb-1 line-clamp-1 text-sm sm:text-base">
             {product.namePt}
           </h3>
-          <p className="text-sm text-muted-foreground mb-3 line-clamp-2 min-h-[2.5rem]">
+          <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem]">
             {product.descriptionPt}
           </p>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <div className="flex items-baseline gap-1">
-              <span className="text-xl font-bold text-foreground">
+              <span className="text-lg sm:text-xl font-bold text-foreground">
                 {product.price.toFixed(2)}
               </span>
-              <span className="text-sm text-muted-foreground">€</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">€</span>
             </div>
             <Button
               size="sm"
               onClick={() => onAddToCart(product)}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1 sm:gap-1.5 touch-manipulation min-h-[40px] sm:min-h-[36px] text-xs sm:text-sm px-2 sm:px-3"
             >
-              <Plus className="h-3.5 w-3.5" />
-              Adicionar
+              <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+              <span className="hidden min-[350px]:inline">Adicionar</span>
+              <span className="min-[350px]:hidden">+</span>
             </Button>
           </div>
         </CardContent>
