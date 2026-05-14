@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingCart, Plus, Filter, MapPin, Tag, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useCartStore } from '@/stores/cart-store'
-import { SAMPLE_PRODUCTS, ISLANDS, CATEGORIES, type Product } from '@/lib/products'
+import { ISLANDS, CATEGORIES, type Product } from '@/lib/products'
 import { useToast } from '@/hooks/use-toast'
 
 interface ProductCatalogProps {
@@ -20,26 +20,45 @@ export function ProductCatalog({ onViewChange }: ProductCatalogProps) {
   const [selectedIsland, setSelectedIsland] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [showFilters, setShowFilters] = useState(false)
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
   const { addItem } = useCartStore()
   const { toast } = useToast()
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/products')
+        if (response.ok) {
+          const data = await response.json()
+          setProducts(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch products:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProducts()
+  }, [])
+
   const filteredProducts = useMemo(() => {
-    return SAMPLE_PRODUCTS.filter((product) => {
+    return products.filter((product) => {
       if (!product.isActive) return false
-      if (selectedIsland && product.island !== selectedIsland) return false
-      if (selectedCategory && product.category !== selectedCategory) return false
+      if (selectedIsland && product.origin !== selectedIsland) return false
+      if (selectedCategory && product.category?.namePt !== selectedCategory) return false
       if (searchQuery) {
         const query = searchQuery.toLowerCase()
         return (
           product.namePt.toLowerCase().includes(query) ||
           product.nameEn?.toLowerCase().includes(query) ||
           product.descriptionPt?.toLowerCase().includes(query) ||
-          product.island?.toLowerCase().includes(query)
+          product.origin?.toLowerCase().includes(query)
         )
       }
       return true
     })
-  }, [searchQuery, selectedIsland, selectedCategory])
+  }, [searchQuery, selectedIsland, selectedCategory, products])
 
   const handleAddToCart = (product: Product) => {
     addItem({
@@ -48,7 +67,8 @@ export function ProductCatalog({ onViewChange }: ProductCatalogProps) {
       nameEn: product.nameEn,
       price: product.price,
       imageUrl: product.imageUrl,
-      island: product.island,
+      origin: product.origin,
+      featured: product.featured,
     })
     toast({
       title: 'Adicionado ao carrinho',
@@ -188,21 +208,39 @@ export function ProductCatalog({ onViewChange }: ProductCatalogProps) {
         </AnimatePresence>
       </div>
 
-      {/* Products grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        <AnimatePresence mode="popLayout">
-          {filteredProducts.map((product, index) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={handleAddToCart}
-              index={index}
-            />
+      {/* Loading state */}
+      {loading && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="overflow-hidden">
+              <div className="aspect-square bg-muted animate-pulse" />
+              <CardContent className="p-4 space-y-3">
+                <div className="h-4 bg-muted rounded animate-pulse" />
+                <div className="h-3 bg-muted rounded animate-pulse w-3/4" />
+                <div className="h-6 bg-muted rounded animate-pulse w-1/3" />
+              </CardContent>
+            </Card>
           ))}
-        </AnimatePresence>
-      </div>
+        </div>
+      )}
 
-      {filteredProducts.length === 0 && (
+      {/* Products grid */}
+      {!loading && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <AnimatePresence mode="popLayout">
+            {filteredProducts.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+                index={index}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
+
+      {!loading && filteredProducts.length === 0 && (
         <div className="text-center py-16">
           <p className="text-muted-foreground text-lg">
             Nenhum produto encontrado com os filtros selecionados.
@@ -259,20 +297,30 @@ function ProductCard({
           />
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-            {product.island && (
+            {product.origin && (
               <Badge className="bg-emerald-600 text-white text-[10px] gap-1 shadow-sm">
                 <MapPin className="h-2.5 w-2.5" />
-                {product.island}
+                {product.origin}
               </Badge>
             )}
             {product.category && (
               <Badge variant="secondary" className="text-[10px] shadow-sm">
-                {product.category}
+                {product.category.namePt}
+              </Badge>
+            )}
+            {product.featured && (
+              <Badge className="bg-amber-500 text-white text-[10px] shadow-sm">
+                ★ Destaque
               </Badge>
             )}
           </div>
+          {product.compareAtPrice && (
+            <Badge className="absolute top-3 right-3 bg-red-500 text-white text-[10px] shadow-sm">
+              -{Math.round((1 - product.price / product.compareAtPrice) * 100)}%
+            </Badge>
+          )}
           {product.stockQuantity <= 5 && product.stockQuantity > 0 && (
-            <Badge className="absolute top-3 right-3 bg-amber-500 text-white text-[10px] shadow-sm">
+            <Badge className="absolute bottom-3 right-3 bg-amber-500 text-white text-[10px] shadow-sm">
               Últimas {product.stockQuantity}
             </Badge>
           )}
@@ -291,6 +339,11 @@ function ProductCard({
                 {product.price.toFixed(2)}
               </span>
               <span className="text-xs sm:text-sm text-muted-foreground">€</span>
+              {product.compareAtPrice && (
+                <span className="text-xs text-muted-foreground line-through ml-1">
+                  {product.compareAtPrice.toFixed(2)}€
+                </span>
+              )}
             </div>
             <Button
               size="sm"

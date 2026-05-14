@@ -1,10 +1,11 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Plus, Minus, ShoppingBag, ArrowRight, Trash2 } from 'lucide-react'
+import { X, Plus, Minus, ShoppingBag, ArrowRight, Trash2, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet'
+import { Badge } from '@/components/ui/badge'
 import { useCartStore } from '@/stores/cart-store'
 
 interface CartSidebarProps {
@@ -77,9 +78,10 @@ export function CartSidebar({ onCheckout }: CartSidebarProps) {
                       <h4 className="text-xs sm:text-sm font-medium line-clamp-1">
                         {item.namePt}
                       </h4>
-                      {item.island && (
-                        <p className="text-[10px] sm:text-xs text-muted-foreground">
-                          {item.island}
+                      {item.origin && (
+                        <p className="text-[10px] sm:text-xs text-muted-foreground flex items-center gap-0.5">
+                          <MapPin className="h-2.5 w-2.5" />
+                          {item.origin}
                         </p>
                       )}
                       <div className="flex items-center justify-between mt-1.5 gap-2">

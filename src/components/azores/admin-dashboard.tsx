@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Edit3,
   Plus,
+  MapPin,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { SAMPLE_PRODUCTS } from '@/lib/products'
+import type { Product } from '@/lib/products'
 
 interface AdminDashboardProps {
   onBack: () => void
@@ -39,7 +40,7 @@ interface OrderData {
 }
 
 export function AdminDashboard({ onBack }: AdminDashboardProps) {
-  const { data: orders = [], isLoading } = useQuery<OrderData[]>({
+  const { data: orders = [], isLoading: ordersLoading } = useQuery<OrderData[]>({
     queryKey: ['orders'],
     queryFn: async () => {
       const response = await fetch('/api/orders')
@@ -48,10 +49,19 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
     },
   })
 
+  const { data: products = [], isLoading: productsLoading } = useQuery<Product[]>({
+    queryKey: ['admin-products'],
+    queryFn: async () => {
+      const response = await fetch('/api/products')
+      if (!response.ok) return []
+      return response.json()
+    },
+  })
+
   const stats = [
     {
       title: 'Produtos',
-      value: SAMPLE_PRODUCTS.length,
+      value: products.length,
       icon: <Package className="h-5 w-5 text-emerald-600" />,
       description: 'Produtos ativos no catálogo',
     },
@@ -141,116 +151,160 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
               </Button>
             </CardHeader>
             <CardContent className="p-0 sm:p-6 sm:pt-0">
-              {/* Desktop table - hidden on mobile */}
-              <div className="hidden md:block">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Produto</TableHead>
-                      <TableHead>Ilha</TableHead>
-                      <TableHead>Categoria</TableHead>
-                      <TableHead>Preço</TableHead>
-                      <TableHead>Stock</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {SAMPLE_PRODUCTS.map((product) => (
-                      <TableRow key={product.id}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded bg-muted overflow-hidden flex-shrink-0">
-                              <img
-                                src={product.imageUrl || '/placeholder.png'}
-                                alt={product.namePt}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            {product.namePt}
-                          </div>
-                        </TableCell>
-                        <TableCell>{product.island}</TableCell>
-                        <TableCell>{product.category}</TableCell>
-                        <TableCell>{product.price.toFixed(2)}€</TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              product.stockQuantity <= 10
-                                ? 'destructive'
-                                : 'secondary'
-                            }
-                          >
-                            {product.stockQuantity}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            className={
-                              product.isActive
-                                ? 'bg-emerald-100 text-emerald-800'
-                                : 'bg-gray-100 text-gray-800'
-                            }
-                          >
-                            {product.isActive ? 'Ativo' : 'Inativo'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 touch-manipulation min-h-[44px] min-w-[44px]">
-                            <Edit3 className="h-3.5 w-3.5" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-
-              {/* Mobile card layout - visible only on mobile */}
-              <div className="md:hidden divide-y">
-                {SAMPLE_PRODUCTS.map((product) => (
-                  <div key={product.id} className="p-4 flex gap-3">
-                    <div className="w-14 h-14 rounded-lg bg-muted overflow-hidden flex-shrink-0">
-                      <img
-                        src={product.imageUrl || '/placeholder.png'}
-                        alt={product.namePt}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h4 className="font-medium text-sm line-clamp-1">{product.namePt}</h4>
-                          <p className="text-xs text-muted-foreground">{product.island} · {product.category}</p>
-                        </div>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0 touch-manipulation min-h-[44px] min-w-[44px]">
-                          <Edit3 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="font-semibold text-sm">{product.price.toFixed(2)}€</span>
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant={product.stockQuantity <= 10 ? 'destructive' : 'secondary'}
-                            className="text-[10px]"
-                          >
-                            Stock: {product.stockQuantity}
-                          </Badge>
-                          <Badge
-                            className={`text-[10px] ${
-                              product.isActive
-                                ? 'bg-emerald-100 text-emerald-800'
-                                : 'bg-gray-100 text-gray-800'
-                            }`}
-                          >
-                            {product.isActive ? 'Ativo' : 'Inativo'}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
+              {productsLoading ? (
+                <div className="text-center py-8 text-muted-foreground text-sm">
+                  A carregar produtos...
+                </div>
+              ) : (
+                <>
+                  {/* Desktop table - hidden on mobile */}
+                  <div className="hidden md:block">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Produto</TableHead>
+                          <TableHead>SKU</TableHead>
+                          <TableHead>Origem</TableHead>
+                          <TableHead>Categoria</TableHead>
+                          <TableHead>Preço</TableHead>
+                          <TableHead>Stock</TableHead>
+                          <TableHead>Estado</TableHead>
+                          <TableHead className="text-right">Ações</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {products.map((product) => (
+                          <TableRow key={product.id}>
+                            <TableCell className="font-medium">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded bg-muted overflow-hidden flex-shrink-0">
+                                  <img
+                                    src={product.imageUrl || '/placeholder.png'}
+                                    alt={product.namePt}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <span className="line-clamp-1">{product.namePt}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-xs font-mono text-muted-foreground">
+                              {product.sku}
+                            </TableCell>
+                            <TableCell>
+                              {product.origin ? (
+                                <span className="flex items-center gap-1 text-xs">
+                                  <MapPin className="h-3 w-3" />
+                                  {product.origin}
+                                </span>
+                              ) : '—'}
+                            </TableCell>
+                            <TableCell>{product.category?.namePt || '—'}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-1">
+                                <span>{product.price.toFixed(2)}€</span>
+                                {product.compareAtPrice && (
+                                  <span className="text-xs text-muted-foreground line-through">
+                                    {product.compareAtPrice.toFixed(2)}€
+                                  </span>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={
+                                  product.stockQuantity <= 10
+                                    ? 'destructive'
+                                    : 'secondary'
+                                }
+                              >
+                                {product.stockQuantity}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-1">
+                                <Badge
+                                  className={
+                                    product.isActive
+                                      ? 'bg-emerald-100 text-emerald-800'
+                                      : 'bg-gray-100 text-gray-800'
+                                  }
+                                >
+                                  {product.isActive ? 'Ativo' : 'Inativo'}
+                                </Badge>
+                                {product.featured && (
+                                  <Badge className="bg-amber-100 text-amber-800 text-[10px]">
+                                    ★
+                                  </Badge>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button variant="ghost" size="icon" className="h-8 w-8 touch-manipulation min-h-[44px] min-w-[44px]">
+                                <Edit3 className="h-3.5 w-3.5" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   </div>
-                ))}
-              </div>
+
+                  {/* Mobile card layout - visible only on mobile */}
+                  <div className="md:hidden divide-y">
+                    {products.map((product) => (
+                      <div key={product.id} className="p-4 flex gap-3">
+                        <div className="w-14 h-14 rounded-lg bg-muted overflow-hidden flex-shrink-0">
+                          <img
+                            src={product.imageUrl || '/placeholder.png'}
+                            alt={product.namePt}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <h4 className="font-medium text-sm line-clamp-1">{product.namePt}</h4>
+                              <p className="text-xs text-muted-foreground">
+                                {product.origin || '—'} · {product.category?.namePt || '—'}
+                              </p>
+                            </div>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0 touch-manipulation min-h-[44px] min-w-[44px]">
+                              <Edit3 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                          <div className="flex items-center justify-between mt-2">
+                            <div className="flex items-center gap-1">
+                              <span className="font-semibold text-sm">{product.price.toFixed(2)}€</span>
+                              {product.compareAtPrice && (
+                                <span className="text-xs text-muted-foreground line-through">
+                                  {product.compareAtPrice.toFixed(2)}€
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge
+                                variant={product.stockQuantity <= 10 ? 'destructive' : 'secondary'}
+                                className="text-[10px]"
+                              >
+                                Stock: {product.stockQuantity}
+                              </Badge>
+                              <Badge
+                                className={`text-[10px] ${
+                                  product.isActive
+                                    ? 'bg-emerald-100 text-emerald-800'
+                                    : 'bg-gray-100 text-gray-800'
+                                }`}
+                              >
+                                {product.isActive ? 'Ativo' : 'Inativo'}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -261,7 +315,7 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
               <CardTitle className="text-base sm:text-lg">Encomendas</CardTitle>
             </CardHeader>
             <CardContent className="p-0 sm:p-6 sm:pt-0">
-              {isLoading ? (
+              {ordersLoading ? (
                 <div className="text-center py-8 text-muted-foreground text-sm">
                   A carregar encomendas...
                 </div>

@@ -7,7 +7,8 @@ export interface CartItem {
   price: number
   quantity: number
   imageUrl: string | null
-  island: string | null
+  origin: string | null
+  featured: boolean
 }
 
 interface CartStore {
