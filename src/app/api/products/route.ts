@@ -1,57 +1,84 @@
-import { NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const products = await db.product.findMany({
-      where: { isActive: true },
-      include: { category: true },
-      orderBy: { createdAt: 'desc' },
-    })
-    return NextResponse.json(products)
+    const { searchParams } = new URL(request.url);
+    const categorySlug = searchParams.get('categorySlug');
+    const search = searchParams.get('search');
+    const sort = searchParams.get('sort') || 'featured';
+    const limit = parseInt(searchParams.get('limit') || '12', 10);
+    const offset = parseInt(searchParams.get('offset') || '0', 10);
+
+    // Build where clause
+    const where: Record<string, unknown> = {
+      active: true,
+    };
+
+    if (categorySlug) {
+      where.category = { slug: categorySlug };
+    }
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search } },
+        { nameEn: { contains: search } },
+        { description: { contains: search } },
+        { descriptionEn: { contains: search } },
+        { origin: { contains: search } },
+      ];
+    }
+
+    // Build orderBy
+    let orderBy: Record<string, unknown> = { createdAt: 'desc' };
+    switch (sort) {
+      case 'featured':
+        orderBy = [{ featured: 'desc' }, { createdAt: 'desc' }];
+        break;
+      case 'price_asc':
+        orderBy = { price: 'asc' };
+        break;
+      case 'price_desc':
+        orderBy = { price: 'desc' };
+        break;
+      case 'name':
+        orderBy = { name: 'asc' };
+        break;
+    }
+
+    const [products, total] = await Promise.all([
+      db.product.findMany({
+        where,
+        orderBy,
+        skip: offset,
+        take: limit,
+        include: {
+          category: {
+            select: {
+              id: true,
+              slug: true,
+              nameEn: true,
+              namePt: true,
+              nameFr: true,
+              nameDe: true,
+            },
+          },
+        },
+      }),
+      db.product.count({ where }),
+    ]);
+
+    return NextResponse.json({
+      products,
+      total,
+      limit,
+      offset,
+    });
   } catch (error) {
-    console.error('Failed to fetch products:', error)
+    console.error('Error fetching products:', error);
     return NextResponse.json(
       { error: 'Failed to fetch products' },
       { status: 500 }
-    )
-  }
-}
-
-export async function POST(request: Request) {
-  try {
-    const body = await request.json()
-    const product = await db.product.create({
-      data: {
-        sku: body.sku || `SKU-${Date.now()}`,
-        namePt: body.namePt,
-        nameEn: body.nameEn || null,
-        nameFr: body.nameFr || null,
-        nameDe: body.nameDe || null,
-        descriptionPt: body.descriptionPt || null,
-        descriptionEn: body.descriptionEn || null,
-        descriptionFr: body.descriptionFr || null,
-        descriptionDe: body.descriptionDe || null,
-        price: body.price,
-        compareAtPrice: body.compareAtPrice || null,
-        currency: body.currency || 'EUR',
-        stockQuantity: body.stockQuantity || 0,
-        categoryId: body.categoryId || null,
-        imageUrl: body.imageUrl || null,
-        images: body.images ? JSON.stringify(body.images) : null,
-        weight: body.weight || null,
-        origin: body.origin || null,
-        featured: body.featured || false,
-        tags: body.tags ? JSON.stringify(body.tags) : null,
-        isActive: body.isActive !== undefined ? body.isActive : true,
-      },
-    })
-    return NextResponse.json(product, { status: 201 })
-  } catch (error) {
-    console.error('Failed to create product:', error)
-    return NextResponse.json(
-      { error: 'Failed to create product' },
-      { status: 500 }
-    )
+    );
   }
 }
